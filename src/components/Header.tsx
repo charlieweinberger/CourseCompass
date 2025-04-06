@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 py-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <BookOpen className="h-6 w-6 text-compass-blue" />
           <span className="font-semibold text-xl text-compass-blue">
@@ -19,47 +19,48 @@ export default function Header() {
         </Link>
 
         <nav>
-          <ul className="flex items-center space-x-6">
+          <ul className="flex items-center gap-4">
             {!isLoading && (
               <>
                 {user ? (
                   <>
                     <li>
-                      <Link
-                        href="/dashboard"
-                        className="text-gray-700 hover:text-compass-blue"
-                      >
-                        Dashboard
+                      <Link href="/dashboard">
+                        <Button className="bg-compass-blue hover:bg-compass-blue-dark">
+                          Dashboard
+                        </Button>
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        href="/profile"
-                        className="text-gray-700 hover:text-compass-blue"
-                      >
-                        Profile
+                      <Link href="/profile">
+                        <Button variant="outline" className="hover:text-gray-100 hover:bg-compass-blue">
+                          Profile
+                        </Button>
                       </Link>
                     </li>
                     <li>
-                      <Button size="sm" asChild>
-                        <Link href="/api/auth/logout">Log Out</Link>
-                      </Button>
+                      <Link href="/api/auth/logout">
+                        <Button variant="outline" className="hover:text-gray-100 hover:bg-compass-blue">
+                          Log Out
+                        </Button>
+                      </Link>
                     </li>
                   </>
                 ) : (
                   <>
                     <li>
-                      <Link
-                        href="/login"
-                        className="text-gray-700 hover:text-compass-blue"
-                      >
-                        Log In
+                      <Link href="/login">
+                        <Button variant="outline" className="hover:text-gray-100 hover:bg-compass-blue">
+                          Log In
+                        </Button>
                       </Link>
                     </li>
                     <li>
-                      <Button size="sm" asChild>
-                        <Link href="/signup">Sign Up</Link>
-                      </Button>
+                      <Link href="/signup">
+                        <Button className="bg-compass-blue hover:bg-compass-blue-dark">
+                          Sign Up
+                        </Button>
+                      </Link>
                     </li>
                   </>
                 )}
