@@ -15,35 +15,35 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-type StudySessionType = {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  duration: number;
-  priority: "high" | "medium" | "low";
-  completed: boolean;
-};
-
-type StudyPlanProps = {
-  courseName: string;
-  courseCode: string;
-  studySessions: StudySessionType[];
-};
-
 export default function StudyPlan({
-  courseName,
-  courseCode,
-  studySessions,
-}: StudyPlanProps) {
+  title,
+  code,
+  study_plan,
+}: Course) {
+  if (!study_plan) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>{title} Study Plan</CardTitle>
+          <CardDescription>{code}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-gray-500">No study plan available.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Group sessions by date
-  const sessionsByDate = studySessions.reduce((acc, session) => {
+  const sessionsByDate = study_plan.sessions.reduce<
+    Record<string, (typeof study_plan.sessions)[0][]>
+  >((acc, session) => {
     if (!acc[session.date]) {
       acc[session.date] = [];
     }
     acc[session.date].push(session);
     return acc;
-  }, {} as Record<string, StudySessionType[]>);
+  }, {});
 
   const priorityColors = {
     high: "bg-red-100 text-red-700",
@@ -60,8 +60,8 @@ export default function StudyPlan({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{courseName} Study Plan</CardTitle>
-        <CardDescription>{courseCode}</CardDescription>
+        <CardTitle>{title} Study Plan</CardTitle>
+        <CardDescription>{code}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -69,11 +69,13 @@ export default function StudyPlan({
             <div key={date} className="space-y-3">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-compass-blue" />
-                <h3 className="font-medium text-2xl tracking-tight leading-tight">{date}</h3>
+                <h3 className="font-medium text-2xl tracking-tight leading-tight">
+                  {date}
+                </h3>
               </div>
 
               <div className="space-y-3 pl-6">
-                {sessionsByDate[date].map((session) => (
+                {sessionsByDate[date].map((session: Session) => (
                   <div
                     key={session.id}
                     className={`p-4 border rounded-lg ${
@@ -143,8 +145,8 @@ export default function StudyPlan({
       </CardContent>
       <CardFooter className="flex justify-between">
         <p className="text-sm text-gray-500">
-          {studySessions.filter((s) => s.completed).length} of{" "}
-          {studySessions.length} sessions completed
+          {study_plan.sessions.filter((s: Session) => s.completed).length} of{" "}
+          {study_plan.sessions.length} sessions completed
         </p>
         <Button variant="outline">
           <Calendar className="mr-2 h-4 w-4" />

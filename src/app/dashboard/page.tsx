@@ -14,6 +14,7 @@ import {
 import {
   BookOpen,
   Upload,
+  Plus,
   Calendar,
   FileText,
   BookOpenCheck,
@@ -23,32 +24,43 @@ import {
   Clock,
 } from "lucide-react";
 
-type Course = {
-  id: number;
-  name: string;
-  code: string;
-  progress: number;
-  nextTask: string;
-  nextDate: string;
-};
-
 // Mock data for courses
 const courses: Course[] = [
   {
     id: 1,
-    name: "Introduction to Computer Science",
+    title: "Introduction to Computer Science",
     code: "CS101",
-    progress: 65,
-    nextTask: "Review Chapter 4",
-    nextDate: "Tomorrow",
+    term: "Fall 2023",
+    syllabus_url: null,
+    created_at: "2023-08-01",
+    updated_at: "2023-08-01",
+    session_index: 0,
+    study_plan: {
+      sessions: [
+        {
+          id: 3,
+          title: "Unit 2: Data Structures",
+          description: "Learn about arrays, linked lists, and trees.",
+          date: "2023-09-15",
+          duration: 2,
+          priority: "high",
+          completed: false,
+        },
+      ],
+      created_at: "2023-08-01",
+      updated_at: "2023-08-10",
+    },
   },
   {
     id: 2,
-    name: "Calculus II",
+    title: "Calculus II",
     code: "MATH202",
-    progress: 42,
-    nextTask: "Practice Integration",
-    nextDate: "Today",
+    term: "Spring 2024",
+    syllabus_url: null,
+    created_at: "2023-08-01",
+    updated_at: "2023-08-01",
+    session_index: 0,
+    study_plan: null,
   },
 ];
 
@@ -59,17 +71,25 @@ export default function DashboardPage() {
     return <div className="flex justify-center p-8">Loading...</div>;
   }
 
+  if (!user) {
+    return (
+      <div className="flex justify-center p-8">
+        <p>Please log in to view your dashboard.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {user?.name || "User"}!</p>
+          <p className="text-gray-600">Welcome back, {user.name}!</p>
         </div>
-        <Link href="/upload">
+        <Link href="/new">
           <Button className="bg-compass-blue hover:bg-compass-blue-dark">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload New Syllabus
+            <Plus className="h-4 w-4" />
+            Create Course
           </Button>
         </Link>
       </div>
@@ -114,6 +134,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
+      {/* TODO design UIs for each individual course/study plan */}
+
       {/* Course list */}
       <h2 className="text-xl font-semibold tracking-tight leading-tight mb-4">
         Your Courses
@@ -123,7 +145,7 @@ export default function DashboardPage() {
           courses.map((course) => (
             <Card key={course.id}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{course.name}</CardTitle>
+                <CardTitle className="text-lg">{course.title}</CardTitle>
                 <CardDescription>{course.code}</CardDescription>
               </CardHeader>
               <CardContent className="pb-2">
@@ -132,12 +154,25 @@ export default function DashboardPage() {
                     <span className="text-muted-foreground">
                       Course Progress
                     </span>
-                    <span className="font-medium">{course.progress}%</span>
+                    <span className="font-medium">
+                      {course.study_plan
+                        ? course.session_index /
+                          course.study_plan.sessions.length
+                        : 0}
+                      %
+                    </span>
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full">
                     <div
                       className="h-2 bg-compass-blue rounded-full"
-                      style={{ width: `${course.progress}%` }}
+                      style={{
+                        width: `${
+                          course.study_plan
+                            ? course.session_index /
+                              course.study_plan.sessions.length
+                            : 0
+                        }%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -146,7 +181,12 @@ export default function DashboardPage() {
                 <div className="flex items-center text-sm text-muted-foreground mb-4">
                   <Clock className="mr-2 h-3 w-3" />
                   <span>
-                    Next: {course.nextTask} • {course.nextDate}
+                    Next:{" "}
+                    {course.study_plan?.sessions[course.session_index].title ??
+                      "n/a"}{" "}
+                    •{" "}
+                    {course.study_plan?.sessions[course.session_index]?.date ??
+                      "n/a"}
                   </span>
                 </div>
                 <div className="flex justify-between w-full">

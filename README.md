@@ -21,6 +21,7 @@ A study companion that helps remind you when and what to study!
 
 1. Finish setting up Auth0
    1. Fix hydration issue
+   2. Fix Auth not working (users can still access dashboard, even if not signed in)
 2. Set up Supabase, connect it to Auth0
 3. Parse uploaded documents w/ Gemini API
 4. Create study plan
