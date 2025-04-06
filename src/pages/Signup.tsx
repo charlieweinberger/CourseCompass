@@ -16,6 +16,9 @@ import {
 import { BookOpen, Github } from "lucide-react";
 
 export default function Signup() {
+
+  // TODO replace this with Auth0
+  
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

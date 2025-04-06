@@ -15,6 +15,9 @@ import {
 import { BookOpen, Github } from "lucide-react";
 
 export default function Login() {
+
+  // TODO replace this with Auth0
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,14 +36,6 @@ export default function Login() {
 
   return (
     <div className="container max-w-md py-12">
-      <div className="text-center mb-8">
-        <Link to="/" className="inline-flex items-center justify-center gap-2">
-          <BookOpen className="h-6 w-6 text-compass-blue" />
-          <span className="font-semibold text-xl text-compass-blue">
-            Course Compass
-          </span>
-        </Link>
-      </div>
 
       <Card>
         <CardHeader className="space-y-1">
