@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +52,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-gray-600">Welcome back, Student</p>
         </div>
-        <Link to="/upload">
+        <Link href="/upload">
           <Button className="bg-compass-blue hover:bg-compass-blue-dark">
             <Upload className="mr-2 h-4 w-4" />
             Upload New Syllabus
@@ -157,7 +157,7 @@ export default function Dashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <Link to="/upload">
+              <Link href="/upload">
                 <Button className="bg-compass-blue hover:bg-compass-blue-dark">
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Syllabus

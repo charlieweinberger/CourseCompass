@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 
@@ -37,12 +37,12 @@ export default function CallToAction() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/signup" className="flex-1">
+                <Link href="/signup" className="flex-1">
                   <Button className="w-full bg-compass-blue hover:bg-compass-blue-dark">
                     Get Started Free
                   </Button>
                 </Link>
-                <Link to="/login" className="flex-1">
+                <Link href="/login" className="flex-1">
                   <Button
                     variant="outline"
                     className="w-full border-compass-blue text-compass-blue hover:bg-compass-blue/5"

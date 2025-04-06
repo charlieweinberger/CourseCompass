@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +45,7 @@ export default function Signup() {
     <div className="container max-w-md py-12 bg-gray-50">
       <div className="text-center mb-8">
         <Link
-          to="/"
+          href="/"
           className="inline-flex items-center justify-center gap-2"
         >
           <BookOpen className="h-6 w-6 text-compass-blue" />
@@ -134,14 +136,14 @@ export default function Signup() {
               >
                 I agree to the{" "}
                 <Link
-                  to="/terms"
+                  href="/terms"
                   className="text-compass-blue hover:underline"
                 >
                   terms of service
                 </Link>{" "}
                 and{" "}
                 <Link
-                  to="/privacy"
+                  href="/privacy"
                   className="text-compass-blue hover:underline"
                 >
                   privacy policy
@@ -161,7 +163,7 @@ export default function Signup() {
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="text-compass-blue hover:underline">
+            <Link href="/login" className="text-compass-blue hover:underline">
               Sign in
             </Link>
           </div>

@@ -1,10 +1,11 @@
-import { useRouterState } from "@tanstack/react-router";
+"use client";
+
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function NotFound() {
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  });
+  const pathname = usePathname();
 
   useEffect(() => {
     console.error(
@@ -13,13 +14,16 @@ export default function NotFound() {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="h-[calc(100vh-181px)] flex items-center justify-center">
       <div className="text-center">
         <h1 className="font-bold tracking-tight text-4xl mb-4">404</h1>
         <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-compass-blue-light hover:text-compass-blue underline">
+        <Link
+          href="/"
+          className="text-compass-blue-light hover:text-compass-blue underline"
+        >
           Return to Home
-        </a>
+        </Link>
       </div>
     </div>
   );

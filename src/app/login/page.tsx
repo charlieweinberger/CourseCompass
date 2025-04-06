@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +17,6 @@ import {
 import { BookOpen, Github } from "lucide-react";
 
 export default function Login() {
-
   // TODO replace this with Auth0
 
   const [email, setEmail] = useState("");
@@ -36,7 +37,6 @@ export default function Login() {
 
   return (
     <div className="container max-w-md py-12">
-
       <Card>
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
@@ -82,7 +82,7 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
                 <Link
-                  to="/forgot-password"
+                  href="/forgot-password"
                   className="text-sm text-compass-blue hover:underline"
                 >
                   Forgot password?
@@ -109,7 +109,7 @@ export default function Login() {
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-compass-blue hover:underline">
+            <Link href="/signup" className="text-compass-blue hover:underline">
               Create an account
             </Link>
           </div>

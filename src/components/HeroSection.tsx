@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Calendar, FileText, BookOpenCheck } from "lucide-react";
 
@@ -29,7 +29,7 @@ export default function HeroSection() {
             </p>
 
             <div className="pt-4">
-              <Link to="/signup">
+              <Link href="/signup">
                 <Button
                   size="lg"
                   className="w-full sm:w-auto bg-white text-compass-blue hover:bg-compass-light"

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UploadForm from "@/components/UploadForm";
 
@@ -10,7 +10,7 @@ export default function Upload() {
     <div className="container py-12">
       <div className="mb-8">
         <Link
-          to="/dashboard"
+          href="/dashboard"
           className="inline-flex items-center text-compass-blue hover:text-compass-blue-dark"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
