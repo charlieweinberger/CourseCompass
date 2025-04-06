@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./index.css";
 
+import Auth0Provider from "@/components/Auth0Provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ReactQueryProvider from "@/components/ReactQueryProvider";
 
 export const metadata: Metadata = {
   title: "Course Compass",
@@ -18,13 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* <ReactQueryProvider> */}
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </div>
-        {/* </ReactQueryProvider> */}
+        <Auth0Provider>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
+        </Auth0Provider>
       </body>
     </html>
   );

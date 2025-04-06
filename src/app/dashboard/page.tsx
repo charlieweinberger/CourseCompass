@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
 
+import { useUser } from "@auth0/nextjs-auth0/client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,8 +23,17 @@ import {
   Clock,
 } from "lucide-react";
 
+type Course = {
+  id: number;
+  name: string;
+  code: string;
+  progress: number;
+  nextTask: string;
+  nextDate: string;
+};
+
 // Mock data for courses
-const courses = [
+const courses: Course[] = [
   {
     id: 1,
     name: "Introduction to Computer Science",
@@ -41,16 +52,19 @@ const courses = [
   },
 ];
 
-export default function Dashboard() {
+export default function DashboardPage() {
+  const { user, isLoading } = useUser();
 
-  // TODO if the user is not logged in, redirect to login page
-  
+  if (isLoading) {
+    return <div className="flex justify-center p-8">Loading...</div>;
+  }
+
   return (
     <div className="container py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-gray-600">Welcome back, Student</p>
+          <p className="text-gray-600">Welcome back, {user?.name || "User"}!</p>
         </div>
         <Link href="/upload">
           <Button className="bg-compass-blue hover:bg-compass-blue-dark">

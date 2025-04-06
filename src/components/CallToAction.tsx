@@ -47,7 +47,7 @@ export default function CallToAction() {
                     variant="outline"
                     className="w-full border-compass-blue text-compass-blue hover:bg-compass-blue/5"
                   >
-                    Sign In
+                    Log in
                   </Button>
                 </Link>
               </div>
@@ -67,9 +67,9 @@ export default function CallToAction() {
                   ))}
                 </div>
                 <p className="text-lg italic mb-4">
-                  "Course Compass completely changed how I study. I went from
+                  &quot;Course Compass completely changed how I study. I went from
                   struggling to keep up with assignments to confidently
-                  mastering course material ahead of time."
+                  mastering course material ahead of time.&quot;
                 </p>
                 <p className="font-medium">
                   — Alex Johnson, Computer Science Major
@@ -89,9 +89,9 @@ export default function CallToAction() {
                   ))}
                 </div>
                 <p className="text-lg italic mb-4">
-                  "The AI-powered study plans are incredibly accurate. It's like
+                  &quot;The AI-powered study plans are incredibly accurate. It&apos;s like
                   having a personal tutor who understands exactly what I need to
-                  focus on."
+                  focus on.&quot;
                 </p>
                 <p className="font-medium">— Maya Patel, Biology Major</p>
               </div>

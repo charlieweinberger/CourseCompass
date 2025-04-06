@@ -198,12 +198,6 @@ body {
   padding-right: var(--container-padding);
 }
 
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1400px;
-  }
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;

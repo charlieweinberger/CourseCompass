@@ -1,75 +1,73 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Menu, X } from "lucide-react";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isLoading } = useUser();
 
   return (
-    <header className="border-b border-gray-200 bg-white shadow-sm">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className="flex items-center gap-2 font-semibold text-compass-blue"
-          >
-            <BookOpen className="h-6 w-6" />
-            <span>Course Compass</span>
-          </Link>
-        </div>
+    <header className="bg-white shadow">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center space-x-2">
+          <BookOpen className="h-6 w-6 text-compass-blue" />
+          <span className="font-semibold text-xl text-compass-blue">
+            Course Compass
+          </span>
+        </Link>
 
-        {/* Desktop */}
-        <div className="hidden sm:flex items-center gap-4">
-          {/* TODO if user is signed in, replace these buttons with a button to the dashboard */}
-          <Link href="/login">
-            <Button
-              variant="outline"
-              className="text-compass-blue hover:text-compass-blue-dark"
-            >
-              Login
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button className="bg-compass-blue hover:bg-compass-blue-dark">
-              Sign Up
-            </Button>
-          </Link>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="p-2 sm:hidden rounded-md"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
+        <nav>
+          <ul className="flex items-center space-x-6">
+            {!isLoading && (
+              <>
+                {user ? (
+                  <>
+                    <li>
+                      <Link
+                        href="/dashboard"
+                        className="text-gray-700 hover:text-compass-blue"
+                      >
+                        Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/profile"
+                        className="text-gray-700 hover:text-compass-blue"
+                      >
+                        Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <Button size="sm" asChild>
+                        <Link href="/api/auth/logout">Log Out</Link>
+                      </Button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link
+                        href="/login"
+                        className="text-gray-700 hover:text-compass-blue"
+                      >
+                        Log In
+                      </Link>
+                    </li>
+                    <li>
+                      <Button size="sm" asChild>
+                        <Link href="/signup">Sign Up</Link>
+                      </Button>
+                    </li>
+                  </>
+                )}
+              </>
+            )}
+          </ul>
+        </nav>
       </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 py-4">
-          <div className="container flex flex-col justify-center items-center gap-4">
-            {/* TODO if user is signed in, replace these buttons with a button to the dashboard */}
-            <Link href="/login">
-              <Button variant="outline" className="w-full text-compass-blue">
-                Login
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button className="w-full bg-compass-blue hover:bg-compass-blue-dark">
-                Sign Up
-              </Button>
-            </Link>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
