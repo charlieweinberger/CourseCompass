@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { User } from "lucide-react";
 
-// TODO move this into settings/profile page within dashboard
+// TODO move this into settings/profile page within Dashboard
 
 export default function Profile() {
   const { user, error, isLoading } = useUser();
