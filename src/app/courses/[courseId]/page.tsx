@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import { getSession } from "@auth0/nextjs-auth0";
-import { cookies } from "next/headers";
 
 // Define the types for the study plan
 interface Session {
@@ -30,9 +29,7 @@ export default async function CoursePage({
   const courseId = p.courseId;
   
   try {
-    // Get Auth0 session - properly await cookies
-    // First await the cookies to fix the error
-    await cookies();
+    // Get the session directly - getSession() accesses cookies internally
     const auth0Session = await getSession();
     
     if (!auth0Session?.user) {
@@ -205,6 +202,7 @@ export default async function CoursePage({
       <div className="container mx-auto py-8 px-4">
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
           <p>An error occurred while loading this course. Please try again later.</p>
+          <p className="text-sm mt-2">{error instanceof Error ? error.message : String(error)}</p>
         </div>
       </div>
     );
