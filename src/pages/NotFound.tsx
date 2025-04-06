@@ -1,15 +1,16 @@
-import { useLocation } from "react-router-dom";
+import { useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-const NotFound = () => {
-  const location = useLocation();
+export default function NotFound() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
 
   useEffect(() => {
     console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
+      `404 Error: User attempted to access non-existent route: ${pathname}`
     );
-  }, [location.pathname]);
+  }, [pathname]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -22,6 +23,4 @@ const NotFound = () => {
       </div>
     </div>
   );
-};
-
-export default NotFound;
+}

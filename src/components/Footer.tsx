@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { BookOpen, Mail, Github, Twitter, Linkedin } from "lucide-react";
 
 export default function Footer() {

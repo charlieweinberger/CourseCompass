@@ -4,7 +4,7 @@ import FeatureSection from "@/components/FeatureSection";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
 
-export default function Index() {
+export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
