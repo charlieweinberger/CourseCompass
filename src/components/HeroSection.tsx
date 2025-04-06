@@ -41,7 +41,7 @@ export default function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto text-white border-white hover:bg-white/10"
+                  className="w-full sm:w-auto bg-transparent text-white border-white hover:text-white hover:bg-white/10"
                 >
                   Explore Features
                 </Button>
