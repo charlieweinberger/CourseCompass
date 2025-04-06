@@ -69,7 +69,7 @@ export default function NewCourse() {
     formData.append("courseCode", courseCode);
     formData.append("term", term);
     formData.append("file", file);
-    fetch("/api/upload-pdf", {
+    fetch("/api/new-course", {
       method: "POST",
       body: formData,
     })

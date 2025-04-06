@@ -2,6 +2,7 @@
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,51 +24,46 @@ import {
   ChevronRight,
   Clock,
 } from "lucide-react";
-
-// Mock data for courses
-const courses: Course[] = [
-  {
-    id: 1,
-    title: "Introduction to Computer Science",
-    code: "CS101",
-    term: "Fall 2023",
-    syllabus_url: null,
-    created_at: "2023-08-01",
-    updated_at: "2023-08-01",
-    session_index: 0,
-    study_plan: {
-      sessions: [
-        {
-          id: 3,
-          title: "Unit 2: Data Structures",
-          description: "Learn about arrays, linked lists, and trees.",
-          date: "2023-09-15",
-          duration: 2,
-          priority: "high",
-          completed: false,
-        },
-      ],
-      created_at: "2023-08-01",
-      updated_at: "2023-08-10",
-    },
-  },
-  {
-    id: 2,
-    title: "Calculus II",
-    code: "MATH202",
-    term: "Spring 2024",
-    syllabus_url: null,
-    created_at: "2023-08-01",
-    updated_at: "2023-08-01",
-    session_index: 0,
-    study_plan: null,
-  },
-];
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 
 export default function DashboardPage() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading: isAuth0Loading } = useUser();
+  const { supabase, isLoading: isSupabaseLoading, isAuthenticated, error: supabaseError } = useSupabaseAuth();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  if (isLoading) {
+  // Fetch courses when Supabase authentication is ready
+  useEffect(() => {
+    async function fetchCourses() {
+      if (!isAuthenticated) return;
+      
+      setIsLoadingCourses(true);
+      setError(null);
+      
+      try {
+        // Directly query courses for the current authenticated user
+        const { data, error: fetchError } = await supabase
+          .from("courses")
+          .select("*");
+          
+        if (fetchError) {
+          throw fetchError;
+        }
+        
+        setCourses(data || []);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+        setError("Failed to load courses");
+      } finally {
+        setIsLoadingCourses(false);
+      }
+    }
+    
+    fetchCourses();
+  }, [isAuthenticated, supabase]);
+
+  if (isAuth0Loading || isSupabaseLoading) {
     return <div className="flex justify-center p-8">Loading...</div>;
   }
 
@@ -75,6 +71,28 @@ export default function DashboardPage() {
     return (
       <div className="flex justify-center p-8">
         <p>Please log in to view your dashboard.</p>
+      </div>
+    );
+  }
+  
+  if (supabaseError) {
+    return (
+      <div className="flex justify-center p-8">
+        <div className="text-red-500">
+          <p>Error connecting to database: {supabaseError.message}</p>
+          <p>Please try logging out and logging back in.</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return (
+      <div className="flex justify-center p-8">
+        <div className="text-red-500">
+          <p>Not authenticated with database.</p>
+          <p>Please try logging out and logging back in.</p>
+        </div>
       </div>
     );
   }
@@ -93,55 +111,20 @@ export default function DashboardPage() {
           </Button>
         </Link>
       </div>
-
-      {/* Quick stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Courses
-            </CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{courses.length}</div>
-            <p className="text-xs text-muted-foreground">+0 from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Study Sessions
-            </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">+3 from last week</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Resources Found
-            </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">+8 from last week</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* TODO design UIs for each individual course/study plan */}
-
       {/* Course list */}
       <h2 className="text-xl font-semibold tracking-tight leading-tight mb-4">
         Your Courses
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {courses.length > 0 ? (
+        {isLoadingCourses ? (
+          <Card className="col-span-full p-8">
+            <div className="flex justify-center">Loading courses...</div>
+          </Card>
+        ) : error ? (
+          <Card className="col-span-full p-8">
+            <div className="text-red-500 text-center">{error}</div>
+          </Card>
+        ) : courses.length > 0 ? (
           courses.map((course) => (
             <Card key={course.id}>
               <CardHeader className="pb-2">
@@ -155,9 +138,12 @@ export default function DashboardPage() {
                       Course Progress
                     </span>
                     <span className="font-medium">
-                      {course.study_plan
-                        ? course.session_index /
-                          course.study_plan.sessions.length
+                      {course.study_plan?.sessions
+                        ? Math.round(
+                            (course.session_index /
+                              course.study_plan.sessions.length) *
+                              100
+                          )
                         : 0}
                       %
                     </span>
@@ -167,9 +153,12 @@ export default function DashboardPage() {
                       className="h-2 bg-compass-blue rounded-full"
                       style={{
                         width: `${
-                          course.study_plan
-                            ? course.session_index /
-                              course.study_plan.sessions.length
+                          course.study_plan?.sessions
+                            ? Math.round(
+                                (course.session_index /
+                                  course.study_plan.sessions.length) *
+                                  100
+                              )
                             : 0
                         }%`,
                       }}
@@ -182,7 +171,7 @@ export default function DashboardPage() {
                   <Clock className="mr-2 h-3 w-3" />
                   <span>
                     Next:{" "}
-                    {course.study_plan?.sessions[course.session_index].title ??
+                    {course.study_plan?.sessions[course.session_index]?.title ??
                       "n/a"}{" "}
                     •{" "}
                     {course.study_plan?.sessions[course.session_index]?.date ??
@@ -190,10 +179,12 @@ export default function DashboardPage() {
                   </span>
                 </div>
                 <div className="flex justify-between w-full">
-                  <Button variant="outline" size="sm">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    View Plan
-                  </Button>
+                  <Link href={`/courses/${course.id}`}>
+                    <Button variant="outline" size="sm">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      View Plan
+                    </Button>
+                  </Link>
                   <Button variant="outline" size="sm">
                     <FileText className="mr-2 h-4 w-4" />
                     Resources
@@ -211,7 +202,7 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <Link href="/upload">
+              <Link href="/new">
                 <Button className="bg-compass-blue hover:bg-compass-blue-dark">
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Syllabus
@@ -278,6 +269,53 @@ export default function DashboardPage() {
             </div>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
+        </Card>
+      </div>
+
+      {/* Quick stats */}
+      <h2 className="text-xl font-semibold tracking-tight leading-tight mb-4">
+        Course Stats
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Active Courses
+            </CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{courses.length}</div>
+            <p className="text-xs text-muted-foreground">+0 from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Study Sessions
+            </CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {courses.reduce((total, course) => {
+                return total + (course.study_plan?.sessions?.length || 0);
+              }, 0)}
+            </div>
+            <p className="text-xs text-muted-foreground">+3 from last week</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Resources Found
+            </CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-muted-foreground">+8 from last week</p>
+          </CardContent>
         </Card>
       </div>
     </div>

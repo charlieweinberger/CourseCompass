@@ -15,6 +15,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+// TODO fit this in to Dashboard, test what it looks like
+
 export default function StudyPlan({
   title,
   code,

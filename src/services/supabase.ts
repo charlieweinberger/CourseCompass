@@ -2,6 +2,8 @@
 import { supabase } from "@/utils/supabase";
 import { v4 as uuidv4 } from "uuid";
 
+// TODO find a way to use all of these functions
+
 // User Functions
 export async function getCurrentUser(auth0Id: string) {
   const { data, error } = await supabase
