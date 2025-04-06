@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +54,7 @@ export default function UploadForm() {
 
     setIsUploading(true);
 
+    // TODO handle file upload logic here
     // Simulate file upload
     setTimeout(() => {
       setIsUploading(false);
@@ -189,8 +192,8 @@ export default function UploadForm() {
       </CardContent>
       <CardFooter className="justify-center border-t px-6 py-4">
         <p className="text-sm text-gray-500">
-          We'll analyze your syllabus to create a personalized study plan and
-          find relevant resources
+          We&apos;ll analyze your syllabus to create a personalized study plan
+          and find relevant resources
         </p>
       </CardFooter>
     </Card>
