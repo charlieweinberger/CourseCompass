@@ -12,6 +12,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 import Header from "@/components/Header";
@@ -63,6 +65,18 @@ const uploadRoute = createRoute({
   component: Upload,
 });
 
+const privacyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/privacy",
+  component: Privacy,
+});
+
+const termsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/terms",
+  component: Terms,
+});
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
@@ -76,6 +90,8 @@ const routeTree = rootRoute.addChildren([
   signupRoute,
   dashboardRoute,
   uploadRoute,
+  privacyRoute,
+  termsRoute,
   notFoundRoute,
 ]);
 const router = createRouter({ routeTree });

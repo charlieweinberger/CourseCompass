@@ -13,11 +13,11 @@ export default function NotFound() {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <h1 className="font-bold tracking-tight text-4xl mb-4">404</h1>
         <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
+        <a href="/" className="text-compass-blue-light hover:text-compass-blue underline">
           Return to Home
         </a>
       </div>

@@ -19,29 +19,9 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link
-            to="/"
-            className="text-sm font-medium text-gray-700 hover:text-compass-blue transition-colors"
-          >
-            Home
-          </Link>
-          <Link
-            to="/dashboard"
-            className="text-sm font-medium text-gray-700 hover:text-compass-blue transition-colors"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/about"
-            className="text-sm font-medium text-gray-700 hover:text-compass-blue transition-colors"
-          >
-            About
-          </Link>
-        </nav>
-
-        <div className="hidden md:flex items-center gap-4">
+        {/* Desktop */}
+        <div className="hidden sm:flex items-center gap-4">
+          {/* TODO if user is signed in, replace these buttons with a button to the dashboard */}
           <Link to="/login">
             <Button
               variant="outline"
@@ -59,7 +39,7 @@ export default function Header() {
 
         {/* Mobile Menu Button */}
         <button
-          className="p-2 md:hidden rounded-md"
+          className="p-2 sm:hidden rounded-md"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? (
@@ -73,40 +53,21 @@ export default function Header() {
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-gray-200 py-4">
-          <div className="container space-y-4">
-            <Link
-              to="/"
-              className="block text-sm font-medium text-gray-700 hover:text-compass-blue"
-            >
-              Home
+          <div className="container flex flex-col justify-center items-center gap-4">
+            {/* TODO if user is signed in, replace these buttons with a button to the dashboard */}
+            <Link to="/login">
+              <Button variant="outline" className="w-full text-compass-blue">
+                Login
+              </Button>
             </Link>
-            <Link
-              to="/dashboard"
-              className="block text-sm font-medium text-gray-700 hover:text-compass-blue"
-            >
-              Dashboard
+            <Link to="/signup">
+              <Button className="w-full bg-compass-blue hover:bg-compass-blue-dark">
+                Sign Up
+              </Button>
             </Link>
-            <Link
-              to="/about"
-              className="block text-sm font-medium text-gray-700 hover:text-compass-blue"
-            >
-              About
-            </Link>
-            <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
-              <Link to="/login">
-                <Button variant="outline" className="w-full text-compass-blue">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button className="w-full bg-compass-blue hover:bg-compass-blue-dark">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
           </div>
         </div>
       )}
     </header>
   );
-};
+}

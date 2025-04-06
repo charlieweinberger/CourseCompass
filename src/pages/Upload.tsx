@@ -3,6 +3,9 @@ import { ArrowLeft } from "lucide-react";
 import UploadForm from "@/components/UploadForm";
 
 export default function Upload() {
+
+  // TODO if the user is not logged in, redirect to login page
+
   return (
     <div className="container py-12">
       <div className="mb-8">
