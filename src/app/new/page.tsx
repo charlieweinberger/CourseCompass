@@ -82,6 +82,14 @@ export default function NewCourse() {
       .then((data) => {
         console.log("Course created successfully:", data);
         setUploadComplete(true);
+        
+        // Redirect to the course page after a short delay
+        setTimeout(() => {
+          // Get the current URL and port
+          const currentUrl = window.location.origin;
+          // Ensure we're using the correct plural 'courses' path
+          window.location.href = `${currentUrl}/courses/${data.course.id}`;
+        }, 1500);
       })
       .catch((error) => {
         console.error("Error creating course:", error);
@@ -91,7 +99,7 @@ export default function NewCourse() {
         setTimeout(() => {
           setUploadComplete(false);
           removeFile();
-        }, 2000);
+        }, 10000);
       });
   };
 
@@ -152,10 +160,10 @@ export default function NewCourse() {
                         <SelectValue placeholder="Select term" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="fall2023">Fall 2023</SelectItem>
-                        <SelectItem value="spring2024">Spring 2024</SelectItem>
-                        <SelectItem value="summer2024">Summer 2024</SelectItem>
                         <SelectItem value="fall2024">Fall 2024</SelectItem>
+                        <SelectItem value="winter2025">Winter 2025</SelectItem>
+                        <SelectItem value="spring2025">Spring 2025</SelectItem>
+                        <SelectItem value="summer2025">Summer 2025</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

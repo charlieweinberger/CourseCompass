@@ -16,19 +16,37 @@ import {
   BookOpen,
   Upload,
   Plus,
-  Calendar,
   FileText,
   BookOpenCheck,
   Bell,
-  Settings,
   ChevronRight,
   Clock,
 } from "lucide-react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { Database } from "@/utils/databaseTypes";
+
+// Define the Course type based on our database schema
+type Course = Database['public']['Tables']['courses']['Row'] & {
+  study_plan?: {
+    sessions?: Array<{
+      title: string;
+      date: string;
+      completed: boolean;
+    }>;
+  }
+};
 
 export default function DashboardPage() {
   const { user, isLoading: isAuth0Loading } = useUser();
-  const { supabase, isLoading: isSupabaseLoading, isAuthenticated, error: supabaseError } = useSupabaseAuth();
+  const { 
+    supabase, 
+    supabaseUser,
+    isLoading: isSupabaseLoading, 
+    isAuthenticated, 
+    error: supabaseError,
+    tokenResponse
+  } = useSupabaseAuth();
+  
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoadingCourses, setIsLoadingCourses] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,16 +54,17 @@ export default function DashboardPage() {
   // Fetch courses when Supabase authentication is ready
   useEffect(() => {
     async function fetchCourses() {
-      if (!isAuthenticated) return;
+      if (!isAuthenticated || !supabaseUser) return;
       
       setIsLoadingCourses(true);
       setError(null);
       
       try {
-        // Directly query courses for the current authenticated user
+        // Query courses for the current authenticated user using auth0_id
         const { data, error: fetchError } = await supabase
           .from("courses")
-          .select("*");
+          .select("*")
+          .eq("user_id", supabaseUser.id);
           
         if (fetchError) {
           throw fetchError;
@@ -61,37 +80,87 @@ export default function DashboardPage() {
     }
     
     fetchCourses();
-  }, [isAuthenticated, supabase]);
+  }, [isAuthenticated, supabase, supabaseUser]);
 
   if (isAuth0Loading || isSupabaseLoading) {
-    return <div className="flex justify-center p-8">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-compass-blue mx-auto mb-4"></div>
+          <p>Loading your dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
     return (
-      <div className="flex justify-center p-8">
-        <p>Please log in to view your dashboard.</p>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] p-8">
+        <p className="text-xl mb-4">Please log in to view your dashboard.</p>
+        <Link href="/api/auth/login">
+          <Button className="bg-compass-blue hover:bg-compass-blue-dark">
+            Log In
+          </Button>
+        </Link>
       </div>
     );
   }
   
   if (supabaseError) {
     return (
-      <div className="flex justify-center p-8">
-        <div className="text-red-500">
-          <p>Error connecting to database: {supabaseError.message}</p>
-          <p>Please try logging out and logging back in.</p>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] p-8">
+        <div className="text-red-500 text-center max-w-md">
+          <h2 className="text-xl font-bold mb-2">Connection Error</h2>
+          <p className="mb-4">Error connecting to database: {supabaseError.message}</p>
+          <p className="mb-6">Please try logging out and logging back in.</p>
+          
+          {/* Debug information */}
+          <div className="mt-4 p-4 bg-gray-100 text-gray-800 text-left rounded text-xs overflow-auto max-h-60">
+            <h3 className="font-bold mb-2">Debug Information:</h3>
+            <pre>{JSON.stringify({ 
+              auth0User: user ? { 
+                sub: user.sub,
+                email: user.email,
+                name: user.name 
+              } : null,
+              tokenResponse: tokenResponse || 'No token response'
+            }, null, 2)}</pre>
+          </div>
+          
+          <div className="flex gap-4 justify-center mt-4">
+            <Link href="/api/auth/logout">
+              <Button variant="outline">Log Out</Button>
+            </Link>
+            <Button 
+              className="bg-compass-blue hover:bg-compass-blue-dark"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
   
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !supabaseUser) {
     return (
-      <div className="flex justify-center p-8">
-        <div className="text-red-500">
-          <p>Not authenticated with database.</p>
-          <p>Please try logging out and logging back in.</p>
+      <div className="flex flex-col justify-center items-center min-h-[60vh] p-8">
+        <div className="text-red-500 text-center max-w-md">
+          <h2 className="text-xl font-bold mb-2">Authentication Error</h2>
+          <p className="mb-4">Not authenticated with the database.</p>
+          <p className="mb-6">Please try logging out and logging back in.</p>
+          <div className="flex gap-4 justify-center">
+            <Link href="/api/auth/logout">
+              <Button variant="outline">Log Out</Button>
+            </Link>
+            <Button 
+              className="bg-compass-blue hover:bg-compass-blue-dark"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -102,11 +171,11 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-gray-600">Welcome back, {user.name}!</p>
+          <p className="text-gray-600">Welcome back, {supabaseUser.name || user.name || 'Student'}!</p>
         </div>
         <Link href="/new">
           <Button className="bg-compass-blue hover:bg-compass-blue-dark">
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 mr-2" />
             Create Course
           </Button>
         </Link>
@@ -118,7 +187,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {isLoadingCourses ? (
           <Card className="col-span-full p-8">
-            <div className="flex justify-center">Loading courses...</div>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-compass-blue"></div>
+            </div>
           </Card>
         ) : error ? (
           <Card className="col-span-full p-8">
@@ -134,81 +205,40 @@ export default function DashboardPage() {
               <CardContent className="pb-2">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Course Progress
-                    </span>
-                    <span className="font-medium">
-                      {course.study_plan?.sessions
-                        ? Math.round(
-                            (course.session_index /
-                              course.study_plan.sessions.length) *
-                              100
-                          )
-                        : 0}
-                      %
-                    </span>
+                    <span className="text-gray-500">Term:</span>
+                    <span>{course.term}</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full">
-                    <div
-                      className="h-2 bg-compass-blue rounded-full"
-                      style={{
-                        width: `${
-                          course.study_plan?.sessions
-                            ? Math.round(
-                                (course.session_index /
-                                  course.study_plan.sessions.length) *
-                                  100
-                              )
-                            : 0
-                        }%`,
-                      }}
-                    />
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Created:</span>
+                    <span>{new Date(course.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex flex-col items-start">
-                <div className="flex items-center text-sm text-muted-foreground mb-4">
-                  <Clock className="mr-2 h-3 w-3" />
-                  <span>
-                    Next:{" "}
-                    {course.study_plan?.sessions[course.session_index]?.title ??
-                      "n/a"}{" "}
-                    •{" "}
-                    {course.study_plan?.sessions[course.session_index]?.date ??
-                      "n/a"}
-                  </span>
-                </div>
-                <div className="flex justify-between w-full">
-                  <Link href={`/courses/${course.id}`}>
-                    <Button variant="outline" size="sm">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      View Plan
-                    </Button>
-                  </Link>
-                  <Button variant="outline" size="sm">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Resources
+              <CardFooter>
+                <Link href={`/courses/${course.id}`} className="w-full">
+                  <Button variant="outline" className="w-full">
+                    View Course
                   </Button>
-                </div>
+                </Link>
               </CardFooter>
             </Card>
           ))
         ) : (
           <Card className="col-span-full">
-            <CardHeader className="text-center">
+            <CardHeader>
               <CardTitle>No courses yet</CardTitle>
               <CardDescription>
-                Upload your first syllabus to get started
+                Create your first course to get started with your study plan
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex justify-center">
-              <Link href="/new">
-                <Button className="bg-compass-blue hover:bg-compass-blue-dark">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Syllabus
+            <CardFooter>
+              <Link href="/new" className="w-full">
+                <Button className="w-full bg-compass-blue hover:bg-compass-blue-dark">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Course
                 </Button>
               </Link>
-            </CardContent>
+            </CardFooter>
           </Card>
         )}
       </div>
@@ -217,11 +247,26 @@ export default function DashboardPage() {
       <h2 className="text-xl font-semibold tracking-tight leading-tight mb-4">
         Quick Actions
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <Link href="/new">
+          <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
+            <CardHeader className="p-4 flex flex-row items-center justify-between">
+              <div className="flex items-center">
+                <div className="mr-3 p-2 rounded-full bg-blue-100">
+                  <Plus className="h-5 w-5 text-compass-blue" />
+                </div>
+                <div>
+                  <CardTitle className="text-sm">Create New Course</CardTitle>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </CardHeader>
+          </Card>
+        </Link>
         <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
           <CardHeader className="p-4 flex flex-row items-center justify-between">
             <div className="flex items-center">
-              <div className="mr-3 p-2 rounded-full bg-blue-100">
+              <div className="mr-3 p-2 rounded-full bg-indigo-100">
                 <Upload className="h-5 w-5 text-compass-blue" />
               </div>
               <div>
@@ -252,19 +297,6 @@ export default function DashboardPage() {
               </div>
               <div>
                 <CardTitle className="text-sm">Notifications</CardTitle>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-        </Card>
-        <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
-          <CardHeader className="p-4 flex flex-row items-center justify-between">
-            <div className="flex items-center">
-              <div className="mr-3 p-2 rounded-full bg-orange-100">
-                <Settings className="h-5 w-5 text-orange-600" />
-              </div>
-              <div>
-                <CardTitle className="text-sm">Settings</CardTitle>
               </div>
             </div>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />

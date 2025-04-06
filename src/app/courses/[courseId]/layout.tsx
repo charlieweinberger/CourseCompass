@@ -1,12 +1,16 @@
-import Link from 'next/link';
+import Link from "next/link";
 
-export default function CourseLayout({
+export default async function CourseLayout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params: { courseId: string };
 }) {
+  // Await params before accessing its properties
+  const p = await params;
+  const courseId = p.courseId;
+  
   return (
     <div>
       <div className="bg-gray-100 py-4 px-6 mb-6">
@@ -15,13 +19,19 @@ export default function CourseLayout({
             ← Back to Courses
           </Link>
           <div className="flex gap-4">
-            <Link href={`/courses/${params.courseId}`} className="hover:underline">
+            <Link href={`/courses/${courseId}`} className="hover:underline">
               Overview
             </Link>
-            <Link href={`/courses/${params.courseId}/syllabus`} className="hover:underline">
+            <Link
+              href={`/courses/${courseId}/syllabus`}
+              className="hover:underline"
+            >
               Syllabus
             </Link>
-            <Link href={`/courses/${params.courseId}/study-plan`} className="hover:underline">
+            <Link
+              href={`/courses/${courseId}/study-plan`}
+              className="hover:underline"
+            >
               Study Plan
             </Link>
           </div>
