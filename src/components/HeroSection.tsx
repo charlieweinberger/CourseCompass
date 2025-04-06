@@ -28,22 +28,13 @@ export default function HeroSection() {
               semester.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="pt-4">
               <Link to="/signup">
                 <Button
                   size="lg"
                   className="w-full sm:w-auto bg-white text-compass-blue hover:bg-compass-light"
                 >
                   Get Started for Free
-                </Button>
-              </Link>
-              <Link to="/features">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto bg-transparent text-white border-white hover:text-white hover:bg-white/10"
-                >
-                  Explore Features
                 </Button>
               </Link>
             </div>
@@ -106,4 +97,4 @@ export default function HeroSection() {
       </div>
     </div>
   );
-};
+}

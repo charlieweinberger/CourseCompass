@@ -1,10 +1,10 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Menu, X } from "lucide-react";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="border-b border-gray-200 bg-white shadow-sm">
@@ -28,10 +28,10 @@ export default function Header() {
             Home
           </Link>
           <Link
-            to="/features"
+            to="/dashboard"
             className="text-sm font-medium text-gray-700 hover:text-compass-blue transition-colors"
           >
-            Features
+            Dashboard
           </Link>
           <Link
             to="/about"
@@ -81,10 +81,10 @@ export default function Header() {
               Home
             </Link>
             <Link
-              to="/features"
+              to="/dashboard"
               className="block text-sm font-medium text-gray-700 hover:text-compass-blue"
             >
-              Features
+              Dashboard
             </Link>
             <Link
               to="/about"
